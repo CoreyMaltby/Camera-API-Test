@@ -17,12 +17,58 @@
             background-color: #f0f2f5;
         }
 
+        h1 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #1a1a1a;
+        }
+
+        .scoreboard {
+            display: flex;
+            width: 90%;
+            max-width: 400px;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .colour-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 90px;
+            border-radius: 12px;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            font-size: 14px;
+            transition: background-color 0.3s, ease-in-out;
+        }
+
+        .box-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+
+        #targetBox {
+            background-color: #e63946; /* Testing color: Vibrant Red-Pink */
+            color: #ffffff;
+        }
+
+        #playerBox {
+            background-color: #bdc3c7; /* Missing/empty placeholder grey */
+            color: #7f8c8d;
+        }
+
         .camera-container {
             position: relative;
             width: 90%;
             max-width: 400px;
             aspect-ratio: 3 / 4;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border-radius: 12px;
             overflow: hidden;
             border: 4px solid #fff;
@@ -42,7 +88,7 @@
         }
 
         button {
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 16px;
             font-weight: bold;
             border: none;
@@ -50,11 +96,17 @@
             background-color: #0070f3;
             color: white;
             cursor: pointer;
-            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 112, 243, 0.2);
+            transition: all 0.2s;
         }
 
         button:hover {
             background-color: #0051cb;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
         }
 
         .invisible {
@@ -85,7 +137,18 @@
 </head>
 
 <body>
-    <h1>Camera API Test</h1>
+    <h1>Colour Hunter Prototype</h1>
+
+    <div class="scoreboard">
+        <div id="targetBox" class="colour-box">
+            <span class="box-label">Target Colour</span>
+            <span id="targetHex">#E63946</span>
+        </div>
+        <div id="playerBox" class="colour-box">
+            <span class="box-label">Your Colour</span>
+            <span id="playerHex">? ? ?</span>
+        </div>
+    </div>
 
     <div class="camera-container">
         <video id="video" autoplay playsinline></video>
@@ -104,6 +167,10 @@
         const canvas = document.getElementById('canvas');
         const photo = document.getElementById('photo');
         const captureBtn = document.getElementById('captureBtn');
+
+        const playerBox  = document.getElementById('playerBox');
+        const playerHex  = document.getElementById('playerHex');
+
         let isStreaming = false;
         let isShowingPhoto = false;
 
@@ -130,9 +197,16 @@
             }).join("");
         }
 
+        // Helper function to determine contrasting text color (black or white) based on background brightness
+        function getContrastColour(r, g, b) {
+            const brightness = (r * 0.299 + g * 0.587 + b * 0.114);
+            return brightness > 186 ? '#000000' : '#ffffff';
+        }
+
         // Handle capture button click
-        captureBtn.addEventListener('click', () => {
+        captureBtn.addEventListener('click', (e) => {
             e.preventDefault();
+
             // If photo is already taken, reset to video mode
             if (isShowingPhoto) {
                 photo.classList.add('invisible');
@@ -140,6 +214,13 @@
                 captureBtn.textContent = 'Take Photo';
                 captureBtn.style.backgroundColor = '#0070f3';
                 captureBtn.style.color = '#ffffff';
+
+                // Reset player box to default state
+                playerBox.style.backgroundColor = '#bdc3c7';
+                playerBox.style.color = '#7f8c8d';
+                playerHex.textContent = '? ? ?';
+
+
                 isShowingPhoto = false;
                 return;
             }
@@ -188,13 +269,15 @@
             photo.classList.remove('invisible');
             video.classList.add('invisible');
 
-            // Update the button text and color to reflect the detected color
-            captureBtn.textContent = `Captured Color: ${detectedHex.toUpperCase()} (Try Again)`;
-            captureBtn.style.backgroundColor = detectedHex;
+            playerBox.style.backgroundColor = detectedHex;
+            playerBox.style.borderColor = '#ffffff';
+            playerHex.textContent = detectedHex;
+            playerBox.style.color = getContrastColour(avgR, avgG, avgB);
 
-            // YIQ formula to switch text colour to black or white based on brightness
-            const brightness = (avgR * 0.299 + avgG * 0.587 + avgB * 0.114);
-            captureBtn.style.color = brightness > 186 ? '#000000' : '#ffffff';
+            // Update the button text and color to reflect the detected color
+            captureBtn.textContent = `Try Again`;
+            captureBtn.style.backgroundColor = '#34495e';
+            captureBtn.style.color = '#ffffff';
 
             isShowingPhoto = true;
         });
