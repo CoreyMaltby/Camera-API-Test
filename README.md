@@ -1,8 +1,10 @@
 # Camera API Test
 Prototype test for Colour Hunter
 
-## Current Milestone: Camera API
-Currently has a proof-of-concept showing that the browser can access a devices rear camera, render a video stream, and grab a frame from that video.
+## Current Milestone: Colour Extraction
+1. Currently has a proof-of-concept showing that the browser can access a devices rear camera, render a video stream, and grab a frame from that video.
+2. Finds the Hex code of the main colour within the bounding box.
+
 
 ### Tech Stack
 - **HTML5 Canvas API**
