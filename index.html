@@ -132,11 +132,12 @@
         // Handle capture button click
         captureBtn.addEventListener('click', () => {
             // If photo is already taken, reset to video mode
-            if (captureBtn.textContent === 'Try Again') {
+            if (captureBtn.textContent.includes('(Try Again)')) {
                 photo.classList.add('invisible');
                 video.classList.remove('invisible');
                 captureBtn.textContent = 'Take Photo';
                 captureBtn.style.backgroundColor = '#0070f3';
+                captureBtn.style.color = '#ffffff';
                 return;
             }
 
