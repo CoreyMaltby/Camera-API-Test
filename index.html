@@ -109,6 +109,15 @@
 
         // Handle capture button click
         captureBtn.addEventListener('click', () => {
+            // If photo is already taken, reset to video mode
+            if (captureBtn.textContent === 'Try Again') {
+                photo.classList.add('hidden');
+                video.classList.remove('hidden');
+                captureBtn.textContent = 'Take Photo';
+                captureBtn.style.backgroundColor = '#0070f3';
+                return;
+            }
+
             if (!isStreaming) return;
 
             // Match canvas dimensions to the active video stream
