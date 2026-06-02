@@ -42,7 +42,7 @@
             border: 3px solid #fff;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             font-size: 14px;
-            transition: background-color 0.3s, ease-in-out;
+            transition: background-color 0.3s ease-in-out;
         }
 
         .box-label {
@@ -151,16 +151,16 @@
 
     <div class="scoreboard">
         <div id="targetBox" class="colour-box">
-            <span class="box-label">Target Colour</span>
+            <span id="targetName" class="box-label">Target Colour</span>
             <span id="targetHex">#------</span>
         </div>
         <div id="playerBox" class="colour-box">
-            <span class="box-label">Your Colour</span>
+            <span id="playerName" class="box-label">Your Colour</span>
             <span id="playerHex">? ? ?</span>
         </div>
     </div>
 
-    <div id="resultBanner">Aim and frame your shot!</div>
+    <div id="resultBanner">Aim and take your shot!</div>
 
     <div class="camera-container">
         <video id="video" autoplay playsinline></video>
