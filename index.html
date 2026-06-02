@@ -105,6 +105,7 @@
         const photo = document.getElementById('photo');
         const captureBtn = document.getElementById('captureBtn');
         let isStreaming = false;
+        let isShowingPhoto = false;
 
         // Request camera access on page load
         async function startCamera() {
@@ -131,13 +132,15 @@
 
         // Handle capture button click
         captureBtn.addEventListener('click', () => {
+            e.preventDefault();
             // If photo is already taken, reset to video mode
-            if (captureBtn.textContent.includes('(Try Again)')) {
+            if (isShowingPhoto) {
                 photo.classList.add('invisible');
                 video.classList.remove('invisible');
                 captureBtn.textContent = 'Take Photo';
                 captureBtn.style.backgroundColor = '#0070f3';
                 captureBtn.style.color = '#ffffff';
+                isShowingPhoto = false;
                 return;
             }
 
@@ -192,6 +195,8 @@
             // YIQ formula to switch text colour to black or white based on brightness
             const brightness = (avgR * 0.299 + avgG * 0.587 + avgB * 0.114);
             captureBtn.style.color = brightness > 186 ? '#000000' : '#ffffff';
+
+            isShowingPhoto = true;
         });
 
         // Start the camera when the page loads
