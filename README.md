@@ -1,14 +1,20 @@
-# Camera API Test
-Prototype test for Colour Hunter
+# Colour Hunter Prototype
+A daily, web-based colour scavenger hunt game. Players use their smartphone to find real-world objects that match a target daily shade
 
-## Current Milestone: Colour Extraction
-1. Currently has a proof-of-concept showing that the browser can access a devices rear camera, render a video stream, and grab a frame from that video.
-2. Finds the Hex code of the main colour within the bounding box.
+## Current Milestone: Data Decoupling and JSON Extraction
+The prototype utilises an external payload schema to handle colour records.
 
+### Implemented Features:
+1. **Asynchronous JSON Ingestion:** Leverages native async/await `fetch()` calls to load global challenge profiles completely separate from core view markups.
+2. **Epoch Modulo Progression:** Tracks daily progression using historical time-delta milliseconds offset against a baseline project epoch origin date (January 1, 2026).
+3. **100-Shade Manifest:** Outboard `colors.json` database layer containing raw RGB, Hex, and tailored typographic designations.
 
 ### Tech Stack
 - **HTML5 Canvas API**
 - **Web MediaDevices API**
+- **JavaScript Fetch API**
+- **JSON Stroage Contexts**
+- **CSS3 Transitions and Layout Engine**
 
 ## How to Run Locally
 

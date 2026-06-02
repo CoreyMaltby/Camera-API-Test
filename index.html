@@ -173,17 +173,6 @@
     <button id="captureBtn">Take Photo</button>
 
     <script>
-        // Mock 7 day databse array 0 (Sunday) to 6 (Saturday)
-        const DAILY_COLORS = [
-            { name: "Cardinal Red", hex: "#C41E3A", r: 196, g: 30, b: 58 },
-            { name: "School Bus Yellow", hex: "#FFD800", r: 255, g: 216, b: 0 },
-            { name: "Irish Green", hex: "#009A49", r: 0, g: 154, b: 73 },
-            { name: "Deep Cobalt", hex: "#0047AB", r: 0, g: 71, b: 171 },
-            { name: "Safety Orange", hex: "#FF5F1F", r: 255, g: 95, b: 31 },
-            { name: "Vibrant Purple", hex: "#8A2BE2", r: 138, g: 43, b: 226 },
-            { name: "Barbie Pink", hex: "#F43393", r: 244, g: 51, b: 147 }
-        ];
-
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const photo = document.getElementById('photo');
@@ -200,15 +189,35 @@
         let isShowingPhoto = false;
         let activeTarget = null;
 
-        function updateDailyTarget() {
-            const currentDayIndex = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
-            activeTarget = DAILY_COLORS[currentDayIndex];
+        async function gameEngine() {
+            try {
+                const response = await fetch('daily_colours.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load daily colours');
+                }
 
-            // Update the target box with the new color and name
-            targetBox.style.backgroundColor = activeTarget.hex;
-            targetHex.textContent = activeTarget.hex;
-            targetName.textContent = activeTarget.name;
-            targetBox.style.color = getContrastColour(activeTarget.r, activeTarget.g, activeTarget.b);
+                const dailyColoursList = await response.json();
+                
+                const epoch = new Date("2026-01-01T00:00:00");
+                const today = new Date();
+                const differenceInTime = today.getTime() - epoch.getTime();
+                const currentDayIndex = Math.floor(differenceInTime / (1000 * 3600 * 24));
+
+                const colourIndex = Math.abs(currentDayIndex) % dailyColoursList.length;
+                activeTarget = dailyColoursList[colourIndex];
+
+                // Update the target box with the new color and name
+                targetBox.style.backgroundColor = activeTarget.hex;
+                targetHex.textContent = activeTarget.hex;
+                targetName.textContent = activeTarget.name;
+                targetBox.style.color = getContrastColour(activeTarget.r, activeTarget.g, activeTarget.b);
+
+                await startCamera();
+            } catch (err) {
+                console.error('Error loading daily colours: ', err);
+                resultBanner.textContent = 'Could not load daily colours. Please check your connection and try again.';
+                resultBanner.style.color = '#c0392b';
+            }
         }
 
         // Request camera access on page load
@@ -344,8 +353,7 @@
 
         // Start the camera when the page loads
         window.addEventListener('load', () => {
-            updateDailyTarget();
-            startCamera();
+            gameEngine();
         });
     </script>
 </body>
