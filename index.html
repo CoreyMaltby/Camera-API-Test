@@ -241,12 +241,11 @@
         }
 
         function calculateMatchScore(r1, g1, b1, r2, g2, b2) {
-            const distance = math.sqrt(
+            const distance = Math.sqrt(
                 Math.pow(r2 - r1, 2) +
                 Math.pow(g2 - g1, 2) +
                 Math.pow(b2 - b1, 2)
             );
-
             const maxDistance = 441.673;
 
             const scorePercentage = (1 - (distance / maxDistance)) * 100;
