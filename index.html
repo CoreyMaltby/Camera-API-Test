@@ -54,12 +54,11 @@
         }
 
         #targetBox {
-            background-color: #e63946; /* Testing color: Vibrant Red-Pink */
             color: #ffffff;
         }
 
         #playerBox {
-            background-color: #bdc3c7; /* Missing/empty placeholder grey */
+            background-color: #bdc3c7;
             color: #7f8c8d;
         }
 
@@ -163,16 +162,44 @@
     <button id="captureBtn">Take Photo</button>
 
     <script>
+        // Mock 7 day databse array
+        const DAILY_COLORS = [
+            { name: "Cardinal Red", hex: "#C41E3A", r: 196, g: 30, b: 58 },   // 0: Sunday
+            { name: "School Bus Yellow", hex: "#FFD800", r: 255, g: 216, b: 0 }, // 1: Monday
+            { name: "Irish Green", hex: "#009A49", r: 0, g: 154, b: 73 },    // 2: Tuesday
+            { name: "Deep Cobalt", hex: "#0047AB", r: 0, g: 71, b: 171 },    // 3: Wednesday
+            { name: "Safety Orange", hex: "#FF5F1F", r: 255, g: 95, b: 31 },  // 4: Thursday
+            { name: "Vibrant Purple", hex: "#8A2BE2", r: 138, g: 43, b: 226 }, // 5: Friday
+            { name: "Barbie Pink", hex: "#F43393", r: 244, g: 51, b: 147 }    // 6: Saturday
+        ];
+
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const photo = document.getElementById('photo');
         const captureBtn = document.getElementById('captureBtn');
+
+        const targetBox = document.getElementById('targetBox');
+        const targetHex = document.getElementById('targetHex');
+        const targetName = document.getElementById('targetName');
 
         const playerBox  = document.getElementById('playerBox');
         const playerHex  = document.getElementById('playerHex');
 
         let isStreaming = false;
         let isShowingPhoto = false;
+        let activeTarget = null;
+
+        function updateDailyTarget() {
+            const currentDayIndex = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
+            activeTarget = DAILY_COLORS[currentDayIndex];
+
+            // Update the target box with the new color and name
+            targetBox.style.backgroundColor = activeTarget.hex;
+            targetHex.textContent = activeTarget.hex;
+            targetName.textContent = activeTarget.name;
+
+            targetBox.style.color = getContrastColour(activeTarget.r, activeTarget.g, activeTarget.b);
+        }
 
         // Request camera access on page load
         async function startCamera() {
@@ -219,7 +246,6 @@
                 playerBox.style.backgroundColor = '#bdc3c7';
                 playerBox.style.color = '#7f8c8d';
                 playerHex.textContent = '? ? ?';
-
 
                 isShowingPhoto = false;
                 return;
@@ -283,6 +309,9 @@
         });
 
         // Start the camera when the page loads
-        window.addEventListener('load', startCamera);
+        window.addEventListener('load', () => {
+            updateDailyTarget();
+            startCamera();
+        });
     </script>
 </body>
