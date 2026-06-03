@@ -197,7 +197,7 @@
                 }
 
                 const dailyColoursList = await response.json();
-                
+
                 const epoch = new Date("2026-01-01T00:00:00");
                 const today = new Date();
                 const differenceInTime = today.getTime() - epoch.getTime();
@@ -208,7 +208,7 @@
 
                 // Update the target box with the new color and name
                 targetBox.style.backgroundColor = activeTarget.hex;
-                targetHex.textContent = activeTarget.hex;
+                targetHex.textContent = activeTarget.hex.toUpperCase();
                 targetName.textContent = activeTarget.name;
                 targetBox.style.color = getContrastColour(activeTarget.r, activeTarget.g, activeTarget.b);
 
@@ -240,25 +240,40 @@
             return "#" + [r, g, b].map(x => {
                 const hex = x.toString(16);
                 return hex.length === 1 ? "0" + hex : hex;
-            }).join("");
+            }).join("").toUpperCase();
         }
 
         // Helper function to determine contrasting text color (black or white) based on background brightness
         function getContrastColour(r, g, b) {
-            const brightness = (r * 0.299 + g * 0.587 + b * 0.114);
+            const red = Number(r);
+            const green = Number(g);
+            const blue = Number(b);
+            const brightness = (red * 0.299 + green * 0.587 + blue * 0.114);
             return brightness > 186 ? '#000000' : '#ffffff';
         }
 
         function calculateMatchScore(r1, g1, b1, r2, g2, b2) {
-            const distance = Math.sqrt(
-                Math.pow(r2 - r1, 2) +
-                Math.pow(g2 - g1, 2) +
-                Math.pow(b2 - b1, 2)
-            );
-            const maxDistance = 441.673;
+            const rDiff = r1 - r2;
+            const gDiff = g1 - g2;
+            const bDiff = b1 - b2;
 
-            const scorePercentage = (1 - (distance / maxDistance)) * 100;
-            return Math.round(scorePercentage);
+            const meanR = (r1 + r2) / 2;
+
+            // Weighted Euclidean formula components
+            const weightR = 2 + (meanR / 256);
+            const weightG = 4;
+            const weightB = 2 + ((255 - meanR) / 256);
+
+            const distance = Math.sqrt(
+                (weightR * Math.pow(rDiff, 2)) +
+                (weightG * Math.pow(gDiff, 2)) +
+                (weightB * Math.pow(bDiff, 2))
+            );
+
+            const maxPerceptualDistance = 764.833; // Maximum distance in the weighted RGB space
+
+            const scorePercentage = (1 - (distance / maxPerceptualDistance)) * 100;
+            return Math.max(0, Math.round(scorePercentage));
         }
 
         // Handle capture button click
@@ -335,7 +350,7 @@
                 avgR, avgG, avgB
             );
 
-            if (matchScore >= 85) {
+            if (matchScore >= 90) {
                 resultBanner.textContent = `Match! ${matchScore}% Similarity!`;
                 resultBanner.style.color = '#27ae60';
             } else {
